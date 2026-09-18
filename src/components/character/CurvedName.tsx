@@ -15,15 +15,15 @@ export function CurvedName({ name, color, active }: CurvedNameProps) {
 
   return (
     <svg
-      viewBox="0 0 220 70"
+      viewBox="0 0 220 46"
       className="pointer-events-none w-full overflow-visible"
       aria-hidden="true"
     >
-      <path id={pathId} d="M 14 58 Q 110 6 206 58" fill="none" />
+      <path id={pathId} d="M 20 40 Q 110 18 200 40" fill="none" />
       <text
         className="font-display"
-        fontSize="26"
-        letterSpacing="1"
+        fontSize="24"
+        letterSpacing="0.5"
         textAnchor="middle"
         style={{
           fill: color,
