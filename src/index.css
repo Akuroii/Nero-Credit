@@ -9,21 +9,22 @@
 }
 
 :root {
-  /* --- world palette: dusk-lavender void with pastel bloom --- */
-  --void-950: #0e0b1a;
-  --dusk-800: #1c1730;
-  --dusk-700: #241c3d;
-  --mist-100: #f4f1fb;
-  --mist-200: #e7e2f7;
+  /* --- world palette: dreamy deep-water, cyan/blue with warm accents --- */
+  --void-950: #060f18;
+  --dusk-800: #0d2130;
+  --dusk-700: #122c3e;
+  --mist-100: #eef8ff;
+  --mist-200: #dbeffb;
 
-  --glow-violet: #b79bff;
-  --glow-pink: #ff9ecb;
-  --glow-cyan: #8fd6ff;
+  --glow-violet: #8fb0ff;
+  --glow-pink: #ffb6c9;
+  --glow-cyan: #7fe2ff;
   --glow-gold: #ffd48f;
+  --glow-teal: #63e0c9;
 
-  --text-primary: #f6f3ff;
-  --text-secondary: #b9b0d6;
-  --text-muted: #8b83ab;
+  --text-primary: #f2fbff;
+  --text-secondary: #a9c7d6;
+  --text-muted: #6f93a3;
 
   color-scheme: dark;
 }
@@ -52,6 +53,27 @@ body {
 /* Utility: GPU-friendly, no layout thrash */
 .will-transform {
   will-change: transform;
+}
+
+@keyframes floatIdle {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(calc(var(--float-amp, 10px) * 0.4), calc(var(--float-amp, 10px) * -1))
+      rotate(var(--float-rot, 1deg));
+  }
+  50% {
+    transform: translate(calc(var(--float-amp, 10px) * -0.3), calc(var(--float-amp, 10px) * -0.2))
+      rotate(0deg);
+  }
+  75% {
+    transform: translate(calc(var(--float-amp, 10px) * -0.6), calc(var(--float-amp, 10px) * 0.8))
+      rotate(calc(var(--float-rot, 1deg) * -1));
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
 }
 
 ::selection {
