@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Dynamo Shadow";
+  src: url("/fonts/Dynamo_Shadow_Std_Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* --- world palette: dusk-lavender void with pastel bloom --- */
+  --void-950: #0e0b1a;
+  --dusk-800: #1c1730;
+  --dusk-700: #241c3d;
+  --mist-100: #f4f1fb;
+  --mist-200: #e7e2f7;
+
+  --glow-violet: #b79bff;
+  --glow-pink: #ff9ecb;
+  --glow-cyan: #8fd6ff;
+  --glow-gold: #ffd48f;
+
+  --text-primary: #f6f3ff;
+  --text-secondary: #b9b0d6;
+  --text-muted: #8b83ab;
+
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--void-950);
+  color: var(--text-primary);
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-display {
+  font-family: "Dynamo Shadow", "Inter", sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* Utility: GPU-friendly, no layout thrash */
+.will-transform {
+  will-change: transform;
+}
+
+::selection {
+  background: var(--glow-violet);
+  color: var(--void-950);
+}
+
+/* Scrollbar kept minimal / in-world */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--dusk-700);
+  border-radius: 999px;
+}
