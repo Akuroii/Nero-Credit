@@ -5,40 +5,41 @@
  * the site. Layout, motion, the energy graph, and orb tinting are all
  * data-driven from here — no per-character markup duplication.
  *
- * NOTE on `displayScale`:
- * Source avatar PNGs aren't uniformly cropped (some heads fill ~90% of
- * their canvas, others ~60%). `displayScale` is a presentation-layer
- * multiplier (a CSS transform) that visually normalizes apparent head
- * size inside the ring. It never touches, crops, or redraws the art.
+ * RELATIONSHIP STRUCTURE (source of truth, do not infer extra edges):
+ *   Aqua → Zah → GetTheMoon → Nozomi → Joe Fadl → Akuroi
+ *   Akuroi → Shizuka → Shadow → Snow
+ * Represented as two chains sharing Akuroi as the joint node. Each
+ * character's `connections` list is populated symmetrically (both
+ * directions of each arrow) so the energy system fires the same way
+ * regardless of which end of a link the user hovers.
  *
- * NOTE on `position` / `depth`:
- * Percentage-based scene coordinates, loosely inspired by the
- * reference composition but organic rather than a rigid grid.
- * `depth` (0 = closest/largest, 1 = farthest/smallest) drives parallax
- * and z-index.
- *
- * NOTE on missing roster slot:
- * A ninth character (partner) was referenced but not yet named — see
- * conversation. `RESERVED_PARTNER_SLOT` documents where they'll land
- * once identified, so adding them later doesn't require re-balancing
- * the whole composition.
+ * NOTE on `displayScale`: presentation-layer normalization only — a
+ * CSS transform that equalizes apparent head size across avatars whose
+ * source crops fill different proportions of their canvas. Never
+ * touches/crops/redraws the art.
  */
 
 export type CharacterId =
   | 'akuroi'
   | 'aqua'
   | 'zah'
+  | 'moon'
+  | 'nozomi'
+  | 'joefadl'
   | 'shadow'
   | 'snow'
-  | 'shizuka'
-  | 'nozomi'
-  | 'moon';
+  | 'shizuka';
 
 export interface CharacterPosition {
-  /** 0–100, percentage of scene width */
   x: number;
-  /** 0–100, percentage of scene height */
   y: number;
+}
+
+export interface SocialLink {
+  id: 'youtube' | 'twitch' | 'discord' | 'tiktok' | 'instagram';
+  label: string;
+  /** Empty until provided — components must treat '' as "not live yet" */
+  url: string;
 }
 
 export interface Character {
@@ -54,8 +55,9 @@ export interface Character {
   connections: CharacterId[];
   motionSeed: number;
   accent: string;
-  /** Hue rotation (deg) applied to the GradientOrb behind this character */
   orbHue: number;
+  /** Only Aqua has this. See TODO below for where real URLs go. */
+  socials?: SocialLink[];
 }
 
 export const characters: Character[] = [
@@ -64,12 +66,12 @@ export const characters: Character[] = [
     name: 'Akuroi',
     role: 'Developer',
     avatar: '/avatars/Akuroi_Head.png',
-    position: { x: 50, y: 54 },
-    mobilePosition: { x: 50, y: 38 },
+    position: { x: 50, y: 42 },
+    mobilePosition: { x: 50, y: 58 },
     depth: 0,
     baseSize: 172,
     displayScale: 1.0,
-    connections: ['aqua', 'zah', 'shadow', 'snow', 'shizuka', 'nozomi', 'moon'],
+    connections: ['joefadl', 'shizuka'],
     motionSeed: 0.12,
     accent: '#c9a6ff',
     orbHue: 255,
@@ -79,114 +81,132 @@ export const characters: Character[] = [
     name: 'Aqua',
     role: "Nero's Father",
     avatar: '/avatars/Aqua_Head.png',
-    position: { x: 50, y: 24 },
-    mobilePosition: { x: 24, y: 13 },
-    depth: 0.1,
-    baseSize: 150,
+    position: { x: 12, y: 20 },
+    mobilePosition: { x: 50, y: 6 },
+    depth: 0.2,
+    baseSize: 148,
     displayScale: 1.0,
-    connections: ['akuroi'],
+    connections: ['zah'],
     motionSeed: 0.31,
     accent: '#ffc266',
     orbHue: 30,
+    socials: [
+      // TODO(user): populate `url` for each platform once links are ready.
+      // Leave url: '' until then — the UI renders these as "coming soon"
+      // and won't emit a live/dead link.
+      { id: 'youtube', label: 'YouTube', url: '' },
+      { id: 'twitch', label: 'Twitch', url: '' },
+      { id: 'discord', label: 'Discord', url: '' },
+      { id: 'tiktok', label: 'TikTok', url: '' },
+      { id: 'instagram', label: 'Instagram', url: '' },
+    ],
   },
   {
     id: 'zah',
     name: 'Zah',
     role: 'Partner',
     avatar: '/avatars/Zah_Head.png',
-    position: { x: 80, y: 34 },
-    mobilePosition: { x: 76, y: 13 },
-    depth: 0.25,
-    baseSize: 136,
+    position: { x: 29, y: 11 },
+    mobilePosition: { x: 50, y: 18 },
+    depth: 0.14,
+    baseSize: 138,
     displayScale: 1.18,
-    connections: ['akuroi'],
+    connections: ['aqua', 'moon'],
     motionSeed: 0.57,
     accent: '#8fb8ff',
     orbHue: 195,
+  },
+  {
+    id: 'moon',
+    name: 'GetTheMoon',
+    role: 'Partner',
+    avatar: '/avatars/Moon_Head.png',
+    position: { x: 50, y: 5 },
+    mobilePosition: { x: 50, y: 30 },
+    depth: 0.1,
+    baseSize: 140,
+    displayScale: 1.05,
+    connections: ['zah', 'nozomi'],
+    motionSeed: 0.19,
+    accent: '#cfe7ff',
+    orbHue: 190,
   },
   {
     id: 'nozomi',
     name: 'Nozomi',
     role: 'Partner',
     avatar: '/avatars/Nozomi_Head.png',
-    position: { x: 90, y: 58 },
-    mobilePosition: { x: 78, y: 32 },
-    depth: 0.3,
-    baseSize: 132,
+    position: { x: 71, y: 11 },
+    mobilePosition: { x: 50, y: 42 },
+    depth: 0.14,
+    baseSize: 136,
     displayScale: 1.12,
-    connections: ['akuroi'],
+    connections: ['moon', 'joefadl'],
     motionSeed: 0.66,
     accent: '#a78bfa',
     orbHue: 235,
   },
   {
-    id: 'shadow',
-    name: 'Shadow',
-    role: 'Assistant',
-    avatar: '/avatars/Shadow_Head.png',
-    position: { x: 15, y: 74 },
-    mobilePosition: { x: 22, y: 55 },
-    depth: 0.2,
-    baseSize: 138,
-    displayScale: 1.14,
-    connections: ['akuroi'],
-    motionSeed: 0.74,
-    accent: '#ff8fae',
-    orbHue: 330,
-  },
-  {
-    id: 'moon',
-    name: 'Moon',
+    id: 'joefadl',
+    name: 'Joe Fadl',
     role: 'Partner',
-    avatar: '/avatars/Moon_Head.png',
-    position: { x: 10, y: 42 },
-    mobilePosition: { x: 24, y: 55 },
-    depth: 0.3,
-    baseSize: 132,
-    displayScale: 1.05,
-    connections: ['akuroi'],
-    motionSeed: 0.19,
-    accent: '#cfe7ff',
-    orbHue: 190,
-  },
-  {
-    id: 'snow',
-    name: 'Snow',
-    role: 'Assistant',
-    avatar: '/avatars/Snow_Head.png',
-    position: { x: 78, y: 80 },
-    mobilePosition: { x: 78, y: 76 },
+    avatar: '/avatars/Partner_Unnamed_Head.png',
+    position: { x: 88, y: 20 },
+    mobilePosition: { x: 50, y: 46 },
     depth: 0.2,
     baseSize: 138,
-    displayScale: 1.1,
-    connections: ['akuroi'],
-    motionSeed: 0.42,
-    accent: '#b28fff',
-    orbHue: 270,
+    displayScale: 1.2,
+    connections: ['nozomi', 'akuroi'],
+    motionSeed: 0.83,
+    accent: '#ffb38a',
+    orbHue: 20,
   },
   {
     id: 'shizuka',
     name: 'Shizuka',
     role: 'Assistant',
     avatar: '/avatars/Shizuka_Head.png',
-    position: { x: 50, y: 92 },
-    mobilePosition: { x: 50, y: 90 },
-    depth: 0.4,
-    baseSize: 126,
+    position: { x: 50, y: 62 },
+    mobilePosition: { x: 50, y: 66 },
+    depth: 0.1,
+    baseSize: 128,
     displayScale: 1.5,
-    connections: ['akuroi'],
+    connections: ['akuroi', 'shadow'],
     motionSeed: 0.89,
     accent: '#dfe6ff',
     orbHue: 200,
   },
+  {
+    id: 'shadow',
+    name: 'Shadow',
+    role: 'Assistant',
+    avatar: '/avatars/Shadow_Head.png',
+    position: { x: 31, y: 80 },
+    mobilePosition: { x: 50, y: 78 },
+    depth: 0.24,
+    baseSize: 136,
+    displayScale: 1.14,
+    connections: ['shizuka', 'snow'],
+    motionSeed: 0.74,
+    accent: '#ff8fae',
+    orbHue: 330,
+  },
+  {
+    id: 'snow',
+    name: 'Snow',
+    role: 'Assistant',
+    avatar: '/avatars/Snow_Head.png',
+    position: { x: 69, y: 80 },
+    mobilePosition: { x: 50, y: 90 },
+    depth: 0.24,
+    baseSize: 136,
+    displayScale: 1.1,
+    connections: ['shadow'],
+    motionSeed: 0.42,
+    accent: '#b28fff',
+    orbHue: 270,
+  },
 ];
-
-/**
- * Reserved for the still-unnamed ninth partner (mirrors Zah's slot on
- * the opposite side of Aqua). Populate and push into `characters` once
- * their name/role is confirmed — nothing else needs to change.
- */
-export const RESERVED_PARTNER_SLOT: CharacterPosition = { x: 20, y: 34 };
 
 export const getCharacter = (id: CharacterId) =>
   characters.find((c) => c.id === id)!;
