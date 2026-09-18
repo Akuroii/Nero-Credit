@@ -4,6 +4,7 @@ import type { Character } from '../../data/characters';
 import { CharacterOrb } from './CharacterOrb';
 import { CurvedName } from './CurvedName';
 import { TitleReveal } from './TitleReveal';
+import { AquaSocialLinks } from './AquaSocialLinks';
 import { useCharacterMotion } from '../../hooks/useCharacterMotion';
 import { useEnergy } from '../energy/EnergyProvider';
 
@@ -20,7 +21,8 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
 
   const depthScale = 1 - character.depth * 0.26;
   const size = character.baseSize * depthScale;
-  const hitSize = size * 1.35;
+  const hitSize = size * 1.32;
+  const hasSocials = !!character.socials?.length;
 
   const { springX, springY, floatStyle } = useCharacterMotion({
     ref: hitRef,
@@ -71,15 +73,21 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
             ref={hitRef}
             type="button"
             className="group relative flex cursor-pointer flex-col items-center rounded-full outline-none"
-            style={{ width: hitSize, height: hitSize + 46 }}
+            style={{
+              width: hasSocials ? size * 1.12 * 2 : hitSize,
+              height: hitSize + 44 + (hasSocials ? size * 0.56 + 34 : 0),
+              paddingTop: 14,
+            }}
             aria-label={`${character.name}, ${character.role}`}
             onMouseEnter={activate}
             onMouseLeave={deactivate}
             onFocus={activate}
             onBlur={deactivate}
             onTouchStart={activate}
+            onTouchEnd={deactivate}
+            onTouchCancel={deactivate}
           >
-            <div style={{ width: size * 1.25, marginBottom: -6 }}>
+            <div style={{ width: size * 1.22, marginBottom: -size * 0.1 }}>
               <CurvedName name={character.name} color={character.accent} active={active} />
             </div>
 
@@ -90,9 +98,18 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
               reducedMotion={reducedMotion}
             />
 
-            <div className="mt-2">
+            <div className="mt-1">
               <TitleReveal role={character.role} accent={character.accent} visible={active} />
             </div>
+
+            {hasSocials && (
+              <AquaSocialLinks
+                socials={character.socials!}
+                accent={character.accent}
+                open={active}
+                radius={size * 0.56}
+              />
+            )}
           </button>
         </div>
       </motion.div>

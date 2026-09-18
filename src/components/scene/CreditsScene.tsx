@@ -30,12 +30,12 @@ export function CreditsScene() {
             </p>
           </header>
 
-          <div className="relative mx-auto h-[920px] w-full max-w-[1100px] sm:h-[840px]">
+          <div className="relative mx-auto h-[980px] w-full max-w-[1150px] sm:h-[800px]">
             <div
               className="absolute left-1/2"
-              style={{ top: isMobile ? '4%' : '3%', transform: 'translateX(-50%)' }}
+              style={{ top: isMobile ? '1%' : '-3%', transform: 'translateX(-50%)' }}
             >
-              <NeroCore size={isMobile ? 130 : 176} onActivate={() => setMenuOpen((v) => !v)} />
+              <NeroCore size={isMobile ? 120 : 150} onActivate={() => setMenuOpen((v) => !v)} />
             </div>
 
             {characters.map((character) => (
