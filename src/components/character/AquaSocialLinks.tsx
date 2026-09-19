@@ -31,7 +31,7 @@ export function AquaSocialLinks({ socials, accent, open, radius }: AquaSocialLin
   return (
     <div
       className="pointer-events-none relative"
-      style={{ width: radius * 2, height: radius + 34 }}
+      style={{ width: radius * 2, height: radius + 46 }}
     >
       {socials.map((social, i) => {
         const t = n === 1 ? 0.5 : i / (n - 1);
@@ -50,11 +50,11 @@ export function AquaSocialLinks({ socials, accent, open, radius }: AquaSocialLin
             aria-label={social.label}
             className="pointer-events-auto absolute left-1/2 top-0 flex items-center justify-center rounded-full"
             style={{
-              width: 30,
-              height: 30,
-              marginLeft: -15,
+              width: 46,
+              height: 46,
+              marginLeft: -23,
               color: 'var(--text-primary)',
-              background: 'rgba(255,255,255,0.06)',
+              background: 'rgba(255,255,255,0.07)',
               border: `1px solid ${accent}55`,
               backdropFilter: 'blur(4px)',
             }}
@@ -77,7 +77,7 @@ export function AquaSocialLinks({ socials, accent, open, radius }: AquaSocialLin
             onMouseLeave={() => setHoveredId(null)}
             tabIndex={open ? 0 : -1}
           >
-            <SocialGlyph id={social.id} className="h-3.5 w-3.5" />
+            <SocialGlyph id={social.id} className="h-5 w-5" />
             {isHovered && (
               <span
                 className="absolute top-full mt-1 whitespace-nowrap rounded-full px-2 py-0.5 text-[0.6rem] font-medium tracking-wide"

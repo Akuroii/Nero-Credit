@@ -31,16 +31,27 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
     isActive: active,
   });
 
-  const activate = () => {
-    setActive(true);
+  // Large hit area: this is the character's main clickable/interactive
+  // area (title reveal, orb glow, floating pause). Kept generous —
+  // never shrunk for the sake of the relationship effect.
+  const activate = () => setActive(true);
+  const deactivate = () => setActive(false);
+
+  // Relationship energy trigger: deliberately a *tighter* area (roughly
+  // the orb itself, via energyRef below) so hovering the padded margin
+  // around a character doesn't light up connections — only actually
+  // engaging the character does. Uses Pointer Events so mouse hover and
+  // touch press/release are both handled by the same, reliable pair of
+  // handlers instead of separate mouse/touch listeners that can miss
+  // each other when the element is mid-float/repel.
+  const activateEnergy = () => {
     if (hitRef.current) {
       const r = hitRef.current.getBoundingClientRect();
       registerPosition(character.id, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
     }
     setActiveId(character.id);
   };
-  const deactivate = () => {
-    setActive(false);
+  const deactivateEnergy = () => {
     if (activeId === character.id) setActiveId(null);
   };
 
@@ -75,7 +86,7 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
             className="group relative flex cursor-pointer flex-col items-center rounded-full outline-none"
             style={{
               width: hasSocials ? size * 1.12 * 2 : hitSize,
-              height: hitSize + 44 + (hasSocials ? size * 0.56 + 34 : 0),
+              height: hitSize + 44 + (hasSocials ? size * 0.68 + 46 : 0),
               paddingTop: 14,
             }}
             aria-label={`${character.name}, ${character.role}`}
@@ -91,12 +102,21 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
               <CurvedName name={character.name} color={character.accent} active={active} />
             </div>
 
-            <CharacterOrb
-              character={character}
-              size={size}
-              active={active}
-              reducedMotion={reducedMotion}
-            />
+            <div
+              onPointerEnter={activateEnergy}
+              onPointerLeave={deactivateEnergy}
+              onPointerDown={activateEnergy}
+              onPointerUp={deactivateEnergy}
+              onPointerCancel={deactivateEnergy}
+              style={{ width: size, height: size }}
+            >
+              <CharacterOrb
+                character={character}
+                size={size}
+                active={active}
+                reducedMotion={reducedMotion}
+              />
+            </div>
 
             <div className="mt-1">
               <TitleReveal role={character.role} accent={character.accent} visible={active} />
@@ -107,7 +127,7 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
                 socials={character.socials!}
                 accent={character.accent}
                 open={active}
-                radius={size * 0.56}
+                radius={size * 0.68}
               />
             )}
           </button>
