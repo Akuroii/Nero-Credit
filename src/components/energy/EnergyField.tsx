@@ -77,7 +77,7 @@ export function EnergyField({ reducedMotion }: EnergyFieldProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             />
-            {[0, 0.33, 0.66].map((delay) => (
+            {[0, 0.5].map((delay) => (
               <motion.circle
                 key={delay}
                 r={3.5}
