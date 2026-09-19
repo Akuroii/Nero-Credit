@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { CharacterId } from '../../data/characters';
 
 interface Point {
@@ -23,6 +23,21 @@ export function EnergyProvider({ children }: { children: ReactNode }) {
     positions.current.set(id, point);
   }, []);
   const getPosition = useCallback((id: CharacterId) => positions.current.get(id), []);
+
+  // Safety net: if focus leaves the page entirely (tab switch, alt-tab)
+  // while a character happens to be "active," the pointerleave that
+  // would normally clear it may never fire. Clear on blur/hide so
+  // energy can never be left stuck active with no way to end it.
+  useEffect(() => {
+    const clear = () => setActiveId(null);
+    window.addEventListener('blur', clear);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) clear();
+    });
+    return () => {
+      window.removeEventListener('blur', clear);
+    };
+  }, []);
 
   return (
     <EnergyContext.Provider value={{ activeId, setActiveId, registerPosition, getPosition }}>
