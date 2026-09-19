@@ -6,6 +6,7 @@ import { CurvedName } from './CurvedName';
 import { TitleReveal } from './TitleReveal';
 import { AquaSocialLinks } from './AquaSocialLinks';
 import { useCharacterMotion } from '../../hooks/useCharacterMotion';
+import { useHasHover } from '../../hooks/useHasHover';
 import { useEnergy } from '../energy/EnergyProvider';
 
 interface CreditCharacterProps {
@@ -16,8 +17,10 @@ interface CreditCharacterProps {
 
 export function CreditCharacter({ character, position, reducedMotion }: CreditCharacterProps) {
   const [active, setActive] = useState(false);
+  const [pinned, setPinned] = useState(false); // Aqua-only, touch-only: tap-toggle for the social menu
   const hitRef = useRef<HTMLButtonElement>(null);
   const { activeId, setActiveId, registerPosition } = useEnergy();
+  const hasHover = useHasHover();
 
   const depthScale = 1 - character.depth * 0.26;
   const size = character.baseSize * depthScale;
@@ -36,6 +39,18 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
   // never shrunk for the sake of the relationship effect.
   const activate = () => setActive(true);
   const deactivate = () => setActive(false);
+
+  // On touch devices, Aqua's social menu is a tap-toggle (open on first
+  // tap, close on second) rather than press-and-hold — everything else,
+  // and Aqua herself on hover-capable devices, keeps the hover behavior.
+  const handleClick = () => {
+    if (hasSocials && !hasHover) setPinned((v) => !v);
+  };
+
+  const socialOpen = hasSocials && (hasHover ? active : pinned);
+  // The name/orb/title "engaged" look follows the same rule, so Aqua's
+  // whole card reads as open while her pinned social menu is showing.
+  const visuallyActive = active || (hasSocials && !hasHover && pinned);
 
   // Relationship energy trigger: deliberately a *tighter* area (roughly
   // the orb itself, via energyRef below) so hovering the padded margin
@@ -97,36 +112,49 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
             onTouchStart={activate}
             onTouchEnd={deactivate}
             onTouchCancel={deactivate}
+            onClick={handleClick}
           >
-            <div style={{ width: size * 1.22, marginBottom: -size * 0.1 }}>
-              <CurvedName name={character.name} color={character.accent} active={active} />
+            <div style={{ width: size * 1.18, marginBottom: size * 0.035 }}>
+              <CurvedName name={character.name} color={character.accent} active={visuallyActive} />
             </div>
 
-            <div
-              onPointerEnter={activateEnergy}
-              onPointerLeave={deactivateEnergy}
-              onPointerDown={activateEnergy}
-              onPointerUp={deactivateEnergy}
-              onPointerCancel={deactivateEnergy}
-              style={{ width: size, height: size }}
-            >
-              <CharacterOrb
-                character={character}
-                size={size}
-                active={active}
-                reducedMotion={reducedMotion}
+            <div className="relative" style={{ width: size, height: size }}>
+              {/* The WebGL canvas inside CharacterOrb installs its own
+                  internal pointer-event system (for raycasting support),
+                  which can swallow/intercept pointerenter/leave before
+                  they reach our handlers — the likely cause of energy
+                  sometimes failing to deactivate. Fix: make the orb
+                  itself inert to pointer events and use a transparent
+                  overlay on top purely for the energy trigger, so the
+                  canvas never sees pointer events at all. */}
+              <div style={{ pointerEvents: 'none' }}>
+                <CharacterOrb
+                  character={character}
+                  size={size}
+                  active={visuallyActive}
+                  reducedMotion={reducedMotion}
+                />
+              </div>
+              <div
+                className="absolute inset-0 rounded-full"
+                style={{ pointerEvents: 'auto' }}
+                onPointerEnter={activateEnergy}
+                onPointerLeave={deactivateEnergy}
+                onPointerDown={activateEnergy}
+                onPointerUp={deactivateEnergy}
+                onPointerCancel={deactivateEnergy}
               />
             </div>
 
-            <div className="mt-1">
-              <TitleReveal role={character.role} accent={character.accent} visible={active} />
+            <div className="mt-2">
+              <TitleReveal role={character.role} accent={character.accent} visible={visuallyActive} />
             </div>
 
             {hasSocials && (
               <AquaSocialLinks
                 socials={character.socials!}
                 accent={character.accent}
-                open={active}
+                open={socialOpen}
                 radius={size * 0.68}
               />
             )}

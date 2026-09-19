@@ -28,7 +28,7 @@ export function CreditsScene() {
           <h1 className="sr-only">Nero Sama</h1>
           <p className="sr-only">The world behind the bot</p>
 
-          <div className="relative mx-auto h-[980px] w-full max-w-[1150px] sm:h-[800px]">
+          <div className="relative mx-auto h-[1020px] w-full max-w-[1150px] sm:h-[840px]">
             <div
               className="absolute left-1/2 flex flex-col items-center"
               style={{ top: isMobile ? '1%' : '0%', transform: 'translateX(-50%)' }}
