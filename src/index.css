@@ -98,6 +98,29 @@ body {
   }
 }
 
+/* Relationship energy: the traveling dot along a connection path.
+   Plain CSS so it costs nothing while running (compositor-driven, no
+   JS ticking) and — more importantly — simply ceases to exist the
+   instant its element is unmounted, with no separate "stop" step
+   required. Only ever mounted while a character is actively engaged;
+   see EnergyField.tsx. */
+@keyframes energyTravel {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
 ::selection {
   background: var(--glow-violet);
   color: var(--void-950);

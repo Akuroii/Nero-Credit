@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { characters, SIZE_SCALE } from '../../data/characters';
 import { CreditCharacter } from '../character/CreditCharacter';
 import { NeroCore } from '../nero/NeroCore';
@@ -8,6 +7,7 @@ import { PointerFieldProvider } from './PointerFieldProvider';
 import { EnergyProvider } from '../energy/EnergyProvider';
 import { EnergyField } from '../energy/EnergyField';
 import { DiscordLink } from '../discord/DiscordLink';
+import { VisitorCounter } from './VisitorCounter';
 import { useIsMobile } from '../../hooks/useViewport';
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 
@@ -23,7 +23,6 @@ const MOBILE_CANVAS_HEIGHT = 1220;
 export function CreditsScene() {
   const isMobile = useIsMobile();
   const reducedMotion = usePrefersReducedMotion();
-  const [menuOpen, setMenuOpen] = useState(false);
   const neroSize = Math.round((isMobile ? 120 : 150) * SIZE_SCALE);
   const canvasHeight = isMobile ? MOBILE_CANVAS_HEIGHT : DESKTOP_CANVAS_HEIGHT;
 
@@ -34,6 +33,7 @@ export function CreditsScene() {
           <AtmosphericBackground />
           <EnergyField reducedMotion={reducedMotion} />
           <DiscordLink />
+          <VisitorCounter />
 
           {/* Real text for accessibility/SEO; the visible title lives on
               the curved arcs around Nero's own image below. */}
@@ -65,7 +65,7 @@ export function CreditsScene() {
                   fontSize={neroSize * 0.16}
                 />
                 <div style={{ marginTop: -neroSize * 0.12 }}>
-                  <NeroCore size={neroSize} onActivate={() => setMenuOpen((v) => !v)} />
+                  <NeroCore size={neroSize} />
                 </div>
                 <CurvedText
                   text="The World Behind The Bot"
@@ -87,25 +87,6 @@ export function CreditsScene() {
               ))}
             </div>
           </div>
-
-          {menuOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-              <div className="rounded-2xl border border-white/10 bg-[var(--dusk-800)] px-8 py-6 text-center">
-                <p className="font-display text-lg text-[var(--text-primary)]">
-                  Nero Sama's menu
-                </p>
-                <p className="mt-1 text-xs text-[var(--text-muted)]">
-                  (radial navigation arrives in Phase 6)
-                </p>
-                <button
-                  onClick={() => setMenuOpen(false)}
-                  className="mt-4 rounded-full border border-white/15 px-4 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-white/5"
-                >
-                  close
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </EnergyProvider>
     </PointerFieldProvider>
