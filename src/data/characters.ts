@@ -14,12 +14,21 @@
  *
  * `position` values follow the layout reference the user provided
  * (composition/spacing only — no artwork or styling copied from it).
+ * `mobilePosition` is a single stacked column (x always 50) spaced by
+ * `y`; the gaps are kept close to even (~11–12 apart) so no row sits
+ * meaningfully tighter than its neighbors as the orb scale changes.
  *
  * NOTE on `displayScale`: presentation-layer normalization only — a
  * CSS transform that equalizes apparent head size across avatars whose
  * source crops fill different proportions of their canvas. Never
  * touches/crops/redraws the art.
+ *
+ * SIZE_SCALE: a single global multiplier applied on top of every
+ * `baseSize` (and Nero's own core size) at render time, so the whole
+ * cast can be nudged larger/smaller in one place without touching each
+ * character's individual numbers.
  */
+export const SIZE_SCALE = 1.1;
 
 export type CharacterId =
   | 'akuroi'
@@ -90,7 +99,7 @@ export const characters: Character[] = [
     role: 'Developer',
     avatar: '/avatars/Akuroi_Head.png',
     position: { x: 65, y: 9 },
-    mobilePosition: { x: 50, y: 62 },
+    mobilePosition: { x: 50, y: 63 },
     depth: 0.02,
     baseSize: 140,
     displayScale: 1.0,
@@ -150,7 +159,7 @@ export const characters: Character[] = [
     role: 'Partner',
     avatar: '/avatars/Partner_Unnamed_Head.png',
     position: { x: 17, y: 90 },
-    mobilePosition: { x: 50, y: 41 },
+    mobilePosition: { x: 50, y: 39 },
     depth: 0.3,
     baseSize: 118,
     displayScale: 1.2,
@@ -165,7 +174,7 @@ export const characters: Character[] = [
     role: 'Partner',
     avatar: '/avatars/Nozomi_Head.png',
     position: { x: 63, y: 66 },
-    mobilePosition: { x: 50, y: 29 },
+    mobilePosition: { x: 50, y: 28 },
     depth: 0.24,
     baseSize: 118,
     displayScale: 1.12,
@@ -180,7 +189,7 @@ export const characters: Character[] = [
     role: 'Partner',
     avatar: '/avatars/Moon_Head.png',
     position: { x: 33, y: 66 },
-    mobilePosition: { x: 50, y: 17 },
+    mobilePosition: { x: 50, y: 16 },
     depth: 0.24,
     baseSize: 118,
     displayScale: 1.05,
@@ -195,7 +204,7 @@ export const characters: Character[] = [
     role: 'Partner',
     avatar: '/avatars/Zah_Head.png',
     position: { x: 84, y: 90 },
-    mobilePosition: { x: 50, y: 53 },
+    mobilePosition: { x: 50, y: 51 },
     depth: 0.3,
     baseSize: 116,
     displayScale: 1.18,

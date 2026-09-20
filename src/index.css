@@ -76,6 +76,28 @@ body {
   }
 }
 
+/* Top-left Discord link: slow idle breathing float on the artwork,
+   and a separate gentle scale-pulse on its glow. Both are
+   transform-only so they stay cheap and never touch layout. */
+@keyframes discordFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@keyframes discordGlowPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
 ::selection {
   background: var(--glow-violet);
   color: var(--void-950);
