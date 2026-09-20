@@ -38,7 +38,7 @@ export function DiscordLink() {
       <span
         className="relative block"
         style={{
-          width: 'clamp(60px, 8vw, 88px)',
+          width: 'clamp(76px, 10vw, 136px)',
           animation: reducedMotion ? 'none' : 'discordFloat 6.5s ease-in-out infinite',
         }}
       >

@@ -2,6 +2,10 @@ interface CurvedNameProps {
   name: string;
   color: string;
   active?: boolean;
+  /** Multiplier on the base 24-unit text size. Defaults to 1 — the
+   *  curve path, viewBox, and layout stay identical; only the glyph
+   *  size changes. */
+  fontScale?: number;
 }
 
 /**
@@ -10,7 +14,7 @@ interface CurvedNameProps {
  * curve amount stays consistent regardless of the bubble's own size;
  * the parent controls final scale via its own width.
  */
-export function CurvedName({ name, color, active }: CurvedNameProps) {
+export function CurvedName({ name, color, active, fontScale = 1 }: CurvedNameProps) {
   const pathId = `name-arc-${name.replace(/\s+/g, '-').toLowerCase()}`;
 
   return (
@@ -22,7 +26,7 @@ export function CurvedName({ name, color, active }: CurvedNameProps) {
       <path id={pathId} d="M 20 40 Q 110 18 200 40" fill="none" />
       <text
         className="font-display"
-        fontSize="24"
+        fontSize={24 * fontScale}
         letterSpacing="0.5"
         textAnchor="middle"
         style={{
