@@ -30,12 +30,14 @@ export function EnergyProvider({ children }: { children: ReactNode }) {
   // energy can never be left stuck active with no way to end it.
   useEffect(() => {
     const clear = () => setActiveId(null);
-    window.addEventListener('blur', clear);
-    document.addEventListener('visibilitychange', () => {
+    const onVisibility = () => {
       if (document.hidden) clear();
-    });
+    };
+    window.addEventListener('blur', clear);
+    document.addEventListener('visibilitychange', onVisibility);
     return () => {
       window.removeEventListener('blur', clear);
+      document.removeEventListener('visibilitychange', onVisibility);
     };
   }, []);
 

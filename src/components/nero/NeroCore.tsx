@@ -1,20 +1,27 @@
+import { useNeroSound } from '../../hooks/useNeroSound';
+
 interface NeroCoreProps {
   size: number;
-  onActivate: () => void;
 }
 
 /**
  * Nero Sama is the bot's own mascot/icon — not one of the credited
  * people, so it deliberately doesn't use CharacterBubble/the credit
  * data model. It gets its own larger, more luminous framing befitting
- * the anchor of the whole world. Clicking/tapping opens the radial menu.
+ * the anchor of the whole world.
+ *
+ * Purely a visual presence: hovering or clicking/tapping plays a short
+ * sound (see useNeroSound), nothing more — no menu, no navigation.
  */
-export function NeroCore({ size, onActivate }: NeroCoreProps) {
+export function NeroCore({ size }: NeroCoreProps) {
+  const playNeroSound = useNeroSound();
+
   return (
     <button
       type="button"
-      onClick={onActivate}
-      aria-label="Open Nero Sama menu"
+      onMouseEnter={playNeroSound}
+      onClick={playNeroSound}
+      aria-label="Nero Sama"
       className="group absolute left-1/2 top-1/2 cursor-pointer rounded-full outline-none"
       style={{ transform: 'translate(-50%, -50%)', width: size, height: size }}
     >

@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEnergy } from './EnergyProvider';
 import { getCharacter, type CharacterId } from '../../data/characters';
@@ -28,10 +27,30 @@ interface EnergyFieldProps {
   reducedMotion: boolean;
 }
 
+/**
+ * Relationship energy — only ever rendered while a character is
+ * actively engaged (`activeId` set by hover/touch on that character).
+ *
+ * Lifecycle, made deliberately unambiguous:
+ *  - The list of links is empty whenever nothing is active, so there is
+ *    nothing here for React to keep alive or for the browser to keep
+ *    ticking — no interaction, no elements, no animation frames.
+ *  - Each relationship is exactly one `motion.g` — the single, direct
+ *    AnimatePresence child — so enter/exit is unambiguous: it fades in
+ *    on mount and fades out on removal via its own explicit, short
+ *    (‑0.3s) transition, fully decoupled from the looping travel
+ *    animation inside it. There's no way for the loop's `repeat:
+ *    Infinity` timing to leak into (or stall) the exit.
+ *  - The traveling dots themselves are driven by a plain CSS
+ *    `@keyframes` animation (`energyTravel`, in index.css) rather than
+ *    a JS-ticked Framer Motion loop — cheaper while running, and when
+ *    the parent unmounts the animation simply stops existing with it.
+ *    Nothing keeps generating once the group is gone.
+ */
 export function EnergyField({ reducedMotion }: EnergyFieldProps) {
   const { activeId, getPosition } = useEnergy();
 
-  const links = useMemo(() => {
+  const links = (() => {
     if (!activeId || reducedMotion) return [];
     const from = getPosition(activeId);
     if (!from) return [];
@@ -41,18 +60,14 @@ export function EnergyField({ reducedMotion }: EnergyFieldProps) {
         const to = getPosition(targetId);
         if (!to) return null;
         const seed = pairSeed(activeId, targetId);
-        const { d, dist } = buildPath(from.x, from.y, to.x, to.y, seed);
-        return { id: `${activeId}-${targetId}`, d, dist, accent: getCharacter(targetId).accent };
+        const { d } = buildPath(from.x, from.y, to.x, to.y, seed);
+        return { id: `${activeId}-${targetId}`, d, accent: getCharacter(targetId).accent };
       })
       .filter((v): v is NonNullable<typeof v> => v !== null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeId, reducedMotion]);
+  })();
 
   return (
-    <svg
-      className="pointer-events-none fixed inset-0 z-40 h-full w-full"
-      aria-hidden="true"
-    >
+    <svg className="pointer-events-none fixed inset-0 z-40 h-full w-full" aria-hidden="true">
       <defs>
         <filter id="energy-glow" x="-60%" y="-60%" width="220%" height="220%">
           <feGaussianBlur stdDeviation="2.4" result="blur" />
@@ -64,50 +79,29 @@ export function EnergyField({ reducedMotion }: EnergyFieldProps) {
       </defs>
       <AnimatePresence>
         {links.map((link) => (
-          <g key={link.id}>
+          <motion.g
+            key={link.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
             {/* faint guiding path, barely visible — the traveling dot carries the effect */}
-            <motion.path
-              d={link.d}
-              fill="none"
-              stroke={link.accent}
-              strokeWidth={1}
-              strokeOpacity={0.14}
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
-            />
-            {[0, 0.5].map((delay) => (
-              <motion.circle
+            <path d={link.d} fill="none" stroke={link.accent} strokeWidth={1} strokeOpacity={0.14} />
+            {[0, 0.65].map((delay) => (
+              <circle
                 key={delay}
                 r={3.5}
                 fill={link.accent}
                 filter="url(#energy-glow)"
-                initial={{ opacity: 0 }}
-                animate={{
-                  offsetDistance: ['0%', '100%'],
-                  opacity: [0, 1, 1, 0],
+                style={{
+                  offsetPath: `path("${link.d}")`,
+                  animation: `energyTravel 1.3s linear infinite`,
+                  animationDelay: `${delay}s`,
                 }}
-                exit={{ opacity: 0 }}
-                transition={{
-                  offsetDistance: {
-                    duration: 1.3,
-                    repeat: Infinity,
-                    ease: 'linear',
-                    delay: delay * 1.3,
-                  },
-                  opacity: {
-                    duration: 1.3,
-                    repeat: Infinity,
-                    ease: 'linear',
-                    delay: delay * 1.3,
-                    times: [0, 0.15, 0.85, 1],
-                  },
-                }}
-                style={{ offsetPath: `path("${link.d}")` }}
               />
             ))}
-          </g>
+          </motion.g>
         ))}
       </AnimatePresence>
     </svg>
