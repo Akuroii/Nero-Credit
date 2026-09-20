@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import type { Character } from '../../data/characters';
+import { SIZE_SCALE, type Character } from '../../data/characters';
 import { CharacterOrb } from './CharacterOrb';
 import { CurvedName } from './CurvedName';
 import { TitleReveal } from './TitleReveal';
@@ -23,7 +23,7 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
   const hasHover = useHasHover();
 
   const depthScale = 1 - character.depth * 0.26;
-  const size = character.baseSize * depthScale;
+  const size = character.baseSize * SIZE_SCALE * depthScale;
   const hitSize = size * 1.32;
   const hasSocials = !!character.socials?.length;
 
