@@ -66,6 +66,10 @@ export interface Character {
   motionSeed: number;
   accent: string;
   orbHue: number;
+  /** Optional per-character multiplier on the curved-name text size.
+   *  Defaults to 1 when omitted — used sparingly for names that read
+   *  a little small at their orb's given size. */
+  nameFontScale?: number;
   /** Only Aqua has this. */
   socials?: SocialLink[];
 }
@@ -76,8 +80,8 @@ export const characters: Character[] = [
     name: 'Aqua',
     role: "Nero's Father",
     avatar: '/avatars/Aqua_Head.png',
-    position: { x: 35, y: 9 },
-    mobilePosition: { x: 50, y: 5 },
+    position: { x: 35, y: 11 },
+    mobilePosition: { x: 50, y: 7 },
     depth: 0,
     baseSize: 140,
     displayScale: 1.0,
@@ -122,6 +126,7 @@ export const characters: Character[] = [
     motionSeed: 0.42,
     accent: '#b28fff',
     orbHue: 270,
+    nameFontScale: 1.15,
   },
   {
     id: 'shadow',
@@ -137,6 +142,7 @@ export const characters: Character[] = [
     motionSeed: 0.74,
     accent: '#ff8fae',
     orbHue: 330,
+    nameFontScale: 1.15,
   },
   {
     id: 'shizuka',
@@ -152,6 +158,7 @@ export const characters: Character[] = [
     motionSeed: 0.89,
     accent: '#dfe6ff',
     orbHue: 200,
+    nameFontScale: 1.15,
   },
   {
     id: 'joefadl',
@@ -167,6 +174,7 @@ export const characters: Character[] = [
     motionSeed: 0.83,
     accent: '#89cff0',
     orbHue: 200,
+    nameFontScale: 1.15,
   },
   {
     id: 'nozomi',
@@ -180,8 +188,9 @@ export const characters: Character[] = [
     displayScale: 1.12,
     connections: ['aqua'],
     motionSeed: 0.66,
-    accent: '#a78bfa',
+    accent: '#00DFBF',
     orbHue: 235,
+    nameFontScale: 1.15,
   },
   {
     id: 'moon',
@@ -195,8 +204,9 @@ export const characters: Character[] = [
     displayScale: 1.05,
     connections: ['aqua'],
     motionSeed: 0.19,
-    accent: '#5f1da7',
+    accent: '#a78bfa',
     orbHue: 269,
+    nameFontScale: 1.15,
   },
   {
     id: 'zah',
@@ -212,6 +222,7 @@ export const characters: Character[] = [
     motionSeed: 0.57,
     accent: '#8fb8ff',
     orbHue: 195,
+    nameFontScale: 1.15,
   },
 ];
 

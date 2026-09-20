@@ -115,7 +115,12 @@ export function CreditCharacter({ character, position, reducedMotion }: CreditCh
             onClick={handleClick}
           >
             <div style={{ width: size * 1.18, marginBottom: size * 0.035 }}>
-              <CurvedName name={character.name} color={character.accent} active={visuallyActive} />
+              <CurvedName
+                name={character.name}
+                color={character.accent}
+                active={visuallyActive}
+                fontScale={character.nameFontScale}
+              />
             </div>
 
             <div className="relative" style={{ width: size, height: size }}>
